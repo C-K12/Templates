@@ -1,18 +1,1 @@
----
-- name: Install Apache Web Server
-  hosts: localhost
-  connection: local
-  gather_facts: False
 
-  tasks:
-    - name: ensure apache is installed
-      ansible.builtin.oackage:
-        name: httpd
-        state: present
-      register: ec2
-
-    - name: ensure apache is running
-      ansible.builtin.oackage:
-        name: httpd
-        state: started
-        enabled: yes
