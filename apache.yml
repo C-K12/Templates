@@ -1,5 +1,5 @@
 ---
-- name: Check Apache (httpd) status on RHEL localhost
+- name: Diagnose service facts
   hosts: localhost
   become: yes
   gather_facts: yes
@@ -8,12 +8,7 @@
     - name: Gather service facts
       ansible.builtin.service_facts:
 
-    - name: Check if Apache (httpd) service is installed
-      when: "'httpd.service' in ansible_facts.services"
+    - name: Print all service facts
       debug:
-        msg: "Apache is {{ ansible_facts.services['httpd.service'].state }}"
+        var: ansible_facts.services
 
-    - name: Apache not found
-      when: "'httpd.service' not in ansible_facts.services"
-      debug:
-        msg: "Apache (httpd) is not installed on this host."
