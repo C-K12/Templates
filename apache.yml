@@ -9,22 +9,7 @@
       debug:
         msg: "OS: {{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
 
-    - name: Read container cgroup info
-      command: cat /proc/self/cgroup
-      register: cgroup_info
-      ignore_errors: yes
 
-    - name: Display cgroup info
-      debug:
-        var: cgroup_info.stdout_lines
-
-    - name: List /proc directory
-      command: ls /proc
-      register: proc_list
-
-    - name: Display /proc directory contents
-      debug:
-        var: proc_list.stdout_lines[:20]
 
 
 
