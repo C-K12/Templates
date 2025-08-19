@@ -1,18 +1,27 @@
 ---
-- name: Install Apache Web Server
+- name: Check Apache status on localhost
   hosts: localhost
-  connection: local
-  gather_facts: False
+  become: yes
+  gather_facts: yes
 
   tasks:
-    - name: ensure apache is installed
-      ansible.builtin.oackage:
-        name: httpd
-        state: present
-      register: ec2
+    - name: Gather service facts
+      ansible.builtin.service_facts:
 
-    - name: ensure apache is running
-      ansible.builtin.oackage:
-        name: httpd
-        state: started
-        enabled: yes
+    - name: Check if Apache (httpd) service is present
+      ansible.builtin.debug:
+        msg: >
+          {% if 'httpd.service' in ansible_facts.services %}
+            Apache service is installed.
+          {% else %}
+            Apache service NOT found.
+          {% endif %}
+
+    - name: Show Apache service status
+      ansible.builtin.debug:
+        msg: >
+          {% if 'httpd.service' in ansible_facts.services %}
+            Status: {{ ansible_facts.services['httpd.service'].state }}
+          {% else %}
+            No Apache service found to check status.
+          {% endif %}
