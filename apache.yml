@@ -1,5 +1,5 @@
 ---
-- name: Test playbook inside container
+- name: Minimal container test playbook
   hosts: localhost
   gather_facts: yes
   become: no
@@ -7,23 +7,25 @@
   tasks:
     - name: Show OS details
       debug:
-        msg: "Operating System: {{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
+        msg: "OS: {{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
 
-    - name: Show running processes (first 10)
-      command: ps aux --sort=-%mem
-      register: ps_output
+    - name: Read container cgroup info
+      command: cat /proc/self/cgroup
+      register: cgroup_info
+      ignore_errors: yes
 
-    - name: Display first 10 processes
+    - name: Display cgroup info
       debug:
-        var: ps_output.stdout_lines[:10]
+        var: cgroup_info.stdout_lines
 
-    - name: Show environment variables
-      command: env
-      register: env_output
+    - name: List /proc directory
+      command: ls /proc
+      register: proc_list
 
-    - name: Display environment variables
+    - name: Display /proc directory contents
       debug:
-        var: env_output.stdout_lines
+        var: proc_list.stdout_lines[:20]
+
 
 
 
