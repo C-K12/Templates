@@ -1,24 +1,29 @@
 ---
-- name: Check Apache (httpd) status via systemctl
+- name: Test playbook inside container
   hosts: localhost
-  become: yes
-  gather_facts: no
+  gather_facts: yes
+  become: no
 
   tasks:
-    - name: Check httpd service status
-      command: systemctl is-active httpd
-      register: apache_status
-      ignore_errors: yes
-
-    - name: Show Apache service status
+    - name: Show OS details
       debug:
-        msg: >
-          {% if apache_status.rc == 0 %}
-            Apache is running (active).
-          {% elif apache_status.rc == 3 %}
-            Apache is not running (inactive).
-          {% else %}
-            Apache service not found or unknown state.
-          {% endif %}
+        msg: "Operating System: {{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
+
+    - name: Show running processes (first 10)
+      command: ps aux --sort=-%mem
+      register: ps_output
+
+    - name: Display first 10 processes
+      debug:
+        var: ps_output.stdout_lines[:10]
+
+    - name: Show environment variables
+      command: env
+      register: env_output
+
+    - name: Display environment variables
+      debug:
+        var: env_output.stdout_lines
+
 
 
