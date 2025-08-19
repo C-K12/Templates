@@ -1,14 +1,24 @@
 ---
-- name: Diagnose service facts
+- name: Check Apache (httpd) status via systemctl
   hosts: localhost
   become: yes
-  gather_facts: yes
+  gather_facts: no
 
   tasks:
-    - name: Gather service facts
-      ansible.builtin.service_facts:
+    - name: Check httpd service status
+      command: systemctl is-active httpd
+      register: apache_status
+      ignore_errors: yes
 
-    - name: Print all service facts
+    - name: Show Apache service status
       debug:
-        var: ansible_facts.services
+        msg: >
+          {% if apache_status.rc == 0 %}
+            Apache is running (active).
+          {% elif apache_status.rc == 3 %}
+            Apache is not running (inactive).
+          {% else %}
+            Apache service not found or unknown state.
+          {% endif %}
+
 
