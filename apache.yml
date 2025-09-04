@@ -1,38 +1,50 @@
+# Do NOT remediate yet
 win22cis_ansible_remediation: false
+
+# Do NOT create new CIS GPOs
 win22cis_create_gpos: false
+
+# Enable backup of existing GPOs
+win22cis_backup_custom_gpos: true
+win22cis_backup_location_style: Windows   # keep backups on Windows, fetch later
+
+# Enable audit-only mode (results go to Ansible output, not JSON files)
 win22cis_run_audit: true
 win22cis_audit_only: true
-win22cis_audit_output_file: c:\CIS\win22_audit_results.json
-
-# Sections to validate
-win22cis_section01: true   # Account Policies
-win22cis_section02: true   # Local Policies
-win22cis_section05: true   # Services
-win22cis_section09: true   # Firewall
-win22cis_section17: true   # Advanced Audit
-win22cis_section18: true   # Admin Templates - Computer
-win22cis_section19: true   # Admin Templates - User
 
 
-- name: Validate Windows Server 2022 CIS compliance
+
+
+
+- name: Backup GPOs and Audit Windows Server 2022 CIS compliance
   hosts: windows
   gather_facts: yes
-
-  vars_files:
-    - group_vars/windows.yml   # your CIS manifest file
 
   roles:
     - role: ansible-lockdown.windows_2022_cis
       vars:
-        win22cis_ansible_remediation: false   # validation only
-        win22cis_create_gpos: false           # no GPOs yet
+        # Backup only (no remediation)
+        win22cis_backup_custom_gpos: true
+        win22cis_create_gpos: false
+        win22cis_ansible_remediation: false
+        win22cis_backup_location_style: Windows
+
+        # Enable audit mode (console only)
+        win22cis_run_audit: true
+        win22cis_audit_only: true
 
   post_tasks:
-    - name: Fetch validation report
+    - name: Fetch GPO backups
       fetch:
-        src: C:\CIS\Temp\win22_audit_results.json
-        dest: prechecks/win22_audit_results.json
-        flat: yes
+        src: C:\GPOBackups
+        dest: manifests/gpo-backups
+        flat: no
+
+
+
+
+
+
 
 
 
