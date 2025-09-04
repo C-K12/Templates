@@ -1,14 +1,14 @@
----
-- name: Minimal container test playbook
-  hosts: localhost
-  gather_facts: yes
-  become: no
+win22cis_ansible_remediation: false
+win22cis_create_gpos: false
 
-  tasks:
-    - name: Show OS details
-      debug:
-        msg: "OS: {{ ansible_facts['os_family'] }} {{ ansible_facts['distribution_version'] }}"
-
+# Sections to validate
+win22cis_section01: true   # Account Policies
+win22cis_section02: true   # Local Policies
+win22cis_section05: true   # Services
+win22cis_section09: true   # Firewall
+win22cis_section17: true   # Advanced Audit
+win22cis_section18: true   # Admin Templates - Computer
+win22cis_section19: true   # Admin Templates - User
 
 
 
