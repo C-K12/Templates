@@ -1,14 +1,23 @@
-win22cis_ansible_remediation: false
-win22cis_create_gpos: false
+- name: Validate Windows Server 2022 CIS compliance
+  hosts: windows
+  gather_facts: yes
 
-# Sections to validate
-win22cis_section01: true   # Account Policies
-win22cis_section02: true   # Local Policies
-win22cis_section05: true   # Services
-win22cis_section09: true   # Firewall
-win22cis_section17: true   # Advanced Audit
-win22cis_section18: true   # Admin Templates - Computer
-win22cis_section19: true   # Admin Templates - User
+  vars_files:
+    - group_vars/windows.yml   # your CIS manifest file
+
+  roles:
+    - role: ansible-lockdown.windows_2022_cis
+      vars:
+        win22cis_ansible_remediation: false   # validation only
+        win22cis_create_gpos: false           # no GPOs yet
+
+  post_tasks:
+    - name: Fetch validation report
+      fetch:
+        src: C:\CIS\cis_validation_report.json
+        dest: manifests/pre-check/cis_validation_report.json
+        flat: yes
+
 
 
 
